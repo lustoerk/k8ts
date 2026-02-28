@@ -73,6 +73,17 @@ Execute autonomously.
 **Helm values files from scratch:**
 Do not generate autonomously — propose structure and wait for approval.
 
+## Phase Log
+
+`docs/phase-log.md` is the running record of all work done. Keep it current.
+
+**Always do:**
+- When a bug is encountered and fixed during any task, append a BUG-XX entry to the current phase section before closing the task.
+- When unplanned work creates future obligation, append a DEBT-XX entry.
+- When a phase is completed, mark all its tasks as done and update `docs/contextblock.md`.
+
+**Format:** Match the existing entries in `docs/phase-log.md` exactly (task checklist, bug with Symptom/Fix, debt item).
+
 ## Validation
 
 After generating or modifying any Helm values file or ArgoCD Application:
