@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_URL="https://github.com/lustoerk/k8ts.git"
+ARGOCD_NAMESPACE="argocd"
+
+echo "==> Starting minikube"
+minikube start --driver=qemu2 --memory=16384 --cpus=4 --disk-size=50g
+
+echo "==> Enabling metrics-server addon"
+minikube addons enable metrics-server
+
+echo "==> Adding Argo Helm repo"
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+
+echo "==> Installing ArgoCD"
+helm install argocd argo/argo-cd \
+  -n "${ARGOCD_NAMESPACE}" --create-namespace \
+  --set server.service.type=NodePort \
+  --set configs.params."server\.insecure"=true
+
+echo "==> Waiting for argocd-server"
+kubectl wait --for=condition=available deployment/argocd-server \
+  -n "${ARGOCD_NAMESPACE}" --timeout=300s
+
+echo ""
+echo "ACTION REQUIRED: Create the ArgoCD repo-creds secret."
+echo "Run the following (replace TOKEN with your GitHub PAT):"
+echo ""
+echo "  kubectl create secret generic argocd-repo-creds \\"
+echo "    -n argocd \\"
+echo "    --from-literal=type=git \\"
+echo "    --from-literal=url=${REPO_URL} \\"
+echo "    --from-literal=password=<TOKEN> \\"
+echo "    --from-literal=username=git"
+echo ""
+read -r -p "Press Enter once the secret is created..."
+
+echo "==> Applying root app"
+kubectl apply -f "$(dirname "$0")/root-app.yaml"
+
+echo "==> Done. ArgoCD will now sync the cluster from Git."
+echo "    Run 'minikube tunnel' in a separate terminal to expose LoadBalancer services."

@@ -1,0 +1,30 @@
+master:
+  replicas: 1
+  affinity: ""
+  data:
+    type: "hostPath"
+    hostPathPrefix: /data/seaweedfs/master
+  logs:
+    type: "hostPath"
+    hostPathPrefix: /data/seaweedfs/master-logs
+
+volume:
+  replicas: 1
+  affinity: ""
+  dataDirs:
+    - name: data1
+      type: "hostPath"
+      hostPathPrefix: /data/seaweedfs/volume
+      maxVolumes: 0
+
+filer:
+  replicas: 1
+  affinity: ""
+  data:
+    type: "hostPath"
+    hostPathPrefix: /data/seaweedfs/filer
+  # S3 auth (enableAuth) and existingConfigSecret to be wired up in Phase 3 with SOPS.
+  # The s3_config secret must contain key "seaweedfs_s3_config" with inline JSON.
+  s3:
+    enabled: true
+    enableAuth: false
