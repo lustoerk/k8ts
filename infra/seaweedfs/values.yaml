@@ -1,6 +1,8 @@
 master:
   replicas: 1
   affinity: ""
+  nodeSelector: |
+    kubernetes.io/arch: arm64
   data:
     type: "hostPath"
     hostPathPrefix: /data/seaweedfs/master
@@ -11,6 +13,8 @@ master:
 volume:
   replicas: 1
   affinity: ""
+  nodeSelector: |
+    kubernetes.io/arch: arm64
   dataDirs:
     - name: data1
       type: "hostPath"
@@ -20,6 +24,8 @@ volume:
 filer:
   replicas: 1
   affinity: ""
+  nodeSelector: |
+    kubernetes.io/arch: arm64
   data:
     type: "hostPath"
     hostPathPrefix: /data/seaweedfs/filer
