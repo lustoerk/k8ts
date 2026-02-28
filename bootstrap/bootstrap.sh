@@ -25,15 +25,16 @@ kubectl wait --for=condition=available deployment/argocd-server \
   -n "${ARGOCD_NAMESPACE}" --timeout=300s
 
 echo ""
-echo "ACTION REQUIRED: Create the ArgoCD repo-creds secret."
-echo "Run the following (replace TOKEN with your GitHub PAT):"
+echo "ACTION REQUIRED: Create the ArgoCD repository secret."
+echo "Run the following (replace <TOKEN> and <USERNAME> with your GitHub details):"
 echo ""
-echo "  kubectl create secret generic argocd-repo-creds \\"
+echo "  kubectl create secret generic argocd-repo-k8ts \\"
 echo "    -n argocd \\"
 echo "    --from-literal=type=git \\"
 echo "    --from-literal=url=${REPO_URL} \\"
 echo "    --from-literal=password=<TOKEN> \\"
-echo "    --from-literal=username=git"
+echo "    --from-literal=username=<USERNAME> \\"
+echo "    --label argocd.argoproj.io/secret-type=repository"
 echo ""
 read -r -p "Press Enter once the secret is created..."
 

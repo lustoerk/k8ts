@@ -75,12 +75,17 @@ Do not generate autonomously — propose structure and wait for approval.
 
 ## Phase Log
 
-`docs/phase-log.md` is the running record of all work done. Keep it current.
+`docs/phase-log.md` is the running record for the **current** phase.
+Completed phases are moved to `docs/history/phase-X.md`.
 
 **Always do:**
 - When a bug is encountered and fixed during any task, append a BUG-XX entry to the current phase section before closing the task.
 - When unplanned work creates future obligation, append a DEBT-XX entry.
-- When a phase is completed, mark all its tasks as done and update `docs/contextblock.md`.
+- When a phase is completed:
+    1. Mark all its tasks as done.
+    2. Move the phase content to `docs/history/`.
+    3. Update `docs/contextblock.md`.
+    4. Start the next phase in `docs/phase-log.md`.
 
 **Format:** Match the existing entries in `docs/phase-log.md` exactly (task checklist, bug with Symptom/Fix, debt item).
 

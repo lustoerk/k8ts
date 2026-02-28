@@ -6,6 +6,7 @@ State: Cluster running. ArgoCD installed and syncing from GitHub. All Phase 1 ap
        ingress-nginx LoadBalancer pending until `minikube tunnel` is active (expected).
 Blockers: None.
 Next: Phase 2 — Monitoring (Prometheus + Grafana).
+History: Bootstrap fixed (BUG-01, BUG-02). Docs modularized to docs/history/.
 
 Hardware: MacBook Pro Nov 2024, Apple M4 Max, 128GB, Tahoe 26.3, minikube qemu2 driver.
 Repo: GitHub private (https://github.com/lustoerk/k8ts.git), migrating to self-hosted GitLab in Phase 5.
