@@ -81,11 +81,14 @@ Completed phases are moved to `docs/history/phase-X.md`.
 **Always do:**
 - When a bug is encountered and fixed during any task, append a BUG-XX entry to the current phase section before closing the task.
 - When unplanned work creates future obligation, append a DEBT-XX entry.
-- When a phase is completed:
-    1. Mark all its tasks as done.
-    2. Move the phase content to `docs/history/`.
-    3. Update `docs/contextblock.md`.
-    4. Start the next phase in `docs/phase-log.md`.
+- When a phase is completed, execute all steps in order:
+    1. Mark all its tasks as done in `docs/phase-log.md`.
+    2. Move the phase content to `docs/history/phase-N.md`.
+    3. Update `docs/contextblock.md` (phase, state, blockers, next phase).
+    4. Update `docs/understanding/system-map.md`: move newly-active services out of Deferred, add anything newly deferred.
+    5. Update `docs/understanding/argocd-model.md` if the ArgoCD topology changed (new wave, new Application pattern).
+    6. Add any new ADRs for decisions made during the phase.
+    7. Start the next phase section in `docs/phase-log.md`.
 
 **Format:** Match the existing entries in `docs/phase-log.md` exactly (task checklist, bug with Symptom/Fix, debt item).
 
