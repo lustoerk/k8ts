@@ -1,11 +1,11 @@
 Context Block
 Date: 2026-02-28
-Phase: Phase 1 scaffold committed. Day 0 not yet executed.
-State: Repo has full scaffold (apps/, bootstrap/, infra/) and README day0 instructions.
-       bootstrap.sh written. ArgoCD Applications defined. Helm values validated.
-       No cluster running yet.
-Blockers: None. Day 0 Mac setup (minikube qemu2 driver) is the next step.
-Next: Execute Day 0 — install prerequisites, smoke-test qemu2 driver, then run bootstrap.sh.
+Phase: Phase 1 complete. Day 1 done.
+State: Cluster running. ArgoCD installed and syncing from GitHub. All Phase 1 apps healthy:
+       cert-manager, cert-manager-issuers, ingress-nginx, seaweedfs all Synced/Healthy.
+       ingress-nginx LoadBalancer pending until `minikube tunnel` is active (expected).
+Blockers: None.
+Next: Phase 2 — Monitoring (Prometheus + Grafana).
 
 Hardware: MacBook Pro Nov 2024, Apple M4 Max, 128GB, Tahoe 26.3, minikube qemu2 driver.
 Repo: GitHub private (https://github.com/lustoerk/k8ts.git), migrating to self-hosted GitLab in Phase 5.
