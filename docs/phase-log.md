@@ -18,8 +18,8 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Tasks
 
-- [ ] Deploy Vault (standalone, manual unseal, ingress + TLS)
-- [ ] Deploy External Secrets Operator
+- [x] Deploy Vault (standalone, manual unseal, ingress + TLS)
+- [x] Deploy External Secrets Operator
 - [ ] Bootstrap Vault: init, unseal, KV engine, Kubernetes auth
 - [ ] Wire ESO → Vault via ClusterSecretStore
 - [ ] Migrate Grafana admin password out of plaintext values into Vault
