@@ -43,8 +43,8 @@ grafana:
       client_secret: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
       scopes: openid email profile
       auth_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/auth
-      token_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/token
-      api_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/userinfo
+      token_url: http://keycloak-keycloakx-http.keycloak.svc.cluster.local:80/realms/homelab/protocol/openid-connect/token
+      api_url: http://keycloak-keycloakx-http.keycloak.svc.cluster.local:80/realms/homelab/protocol/openid-connect/userinfo
       role_attribute_path: contains(groups[*], 'admin') && 'Admin' || 'Viewer'
       use_pkce: true
   ingress:
