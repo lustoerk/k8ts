@@ -114,7 +114,6 @@ data:
       - openid
       - profile
       - email
-      - groups
     rootCA: |
       -----BEGIN CERTIFICATE-----
       MIIBajCCARGgAwIBAgIRAKLDgamXiK3a7z+Jdd6SqhMwCgYIKoZIzj0EAwIwFTET
