@@ -1,6 +1,6 @@
 image:
-  repository: camunda/keycloak
-  tag: "25"
+  repository: quay.io/keycloak/keycloak
+  tag: "26"
 
 http:
   # Serve at root — our OIDC URLs have no /auth prefix
