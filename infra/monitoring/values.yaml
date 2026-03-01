@@ -46,6 +46,7 @@ grafana:
       token_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/token
       api_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/userinfo
       role_attribute_path: contains(groups[*], 'admin') && 'Admin' || 'Viewer'
+      use_pkce: true
   ingress:
     enabled: true
     ingressClassName: nginx
