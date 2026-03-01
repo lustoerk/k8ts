@@ -19,7 +19,7 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Tasks
 
-- [ ] Deploy Keycloak (Helm, standalone, ingress + TLS at `keycloak.homelab`)
+- [x] Deploy Keycloak (Helm, standalone, ingress + TLS at `keycloak.homelab`)
 - [ ] Bootstrap Keycloak realm and admin credentials (stored in Vault)
 - [ ] Configure Grafana OAuth via Keycloak
 - [ ] Configure ArgoCD SSO via Keycloak
