@@ -1,5 +1,31 @@
 # Task Plan — Phase 3: Vault + ESO
 
+## Learnings from First Attempt (2026-03-01)
+
+- **ESO CRD size issue**: `ServerSideApply=true` is required on the `external-secrets`
+  Application. Without it, ArgoCD silently drops `SecretStore` and `ClusterSecretStore`
+  CRDs because their schemas exceed the `last-applied-configuration` annotation limit.
+  Add this syncOption before first sync.
+
+- **Two-step ArgoCD sync required for Application changes**: Changing syncOptions on
+  a child Application (`apps/external-secrets.yaml`) requires syncing the ROOT app first
+  to update the Application object, then syncing the child app. Refreshing only the child
+  app picks up stale syncOptions from the cluster object.
+
+- **Cert-controller readiness probe**: After the CRD race condition, the cert-controller
+  may show `"ca cert not yet ready"` errors. Bouncing the webhook pod resolves it once
+  the main controller is stable.
+
+- **Vault bootstrap is manual-heavy**: The init/unseal/auth-enable/policy/role sequence
+  is disruptive to do interactively via `kubectl exec`. Consider scripting the vault
+  bootstrap into `bootstrap/vault-init.sh` for the next attempt.
+
+- **Vault was already initialized** when bootstrap was attempted — Vault must have
+  auto-initialized from a previous `minikube start` and PVC reuse. Check
+  `vault status` before running `vault operator init`.
+
+---
+
 ## Scope
 
 Deploy HashiCorp Vault (standalone, manual unseal) and External Secrets Operator.

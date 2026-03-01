@@ -6,6 +6,7 @@ State: Cluster running. ArgoCD syncing from GitHub. All Phase 2 apps healthy:
        monitoring (kube-prometheus-stack) Synced/Healthy — Prometheus, Grafana, Alertmanager running.
        Grafana accessible at https://grafana.homelab.local (requires minikube tunnel + /etc/hosts entry).
        Alertmanager running with null receiver (no active alerting — architectural completeness only).
+       Phase 3 (Vault+ESO) attempted, reverted — restarting fresh next session.
 Blockers: None.
 Next: Phase 3 — Vault + ESO.
 History: Bootstrap fixed (BUG-01, BUG-02). Monitoring deployed (BUG-05).

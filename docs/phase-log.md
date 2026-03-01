@@ -14,12 +14,12 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ## Phase 3 — Vault + ESO
 
-**Date:** TBD
+**Date:** TBD (restarting fresh)
 
 ### Tasks
 
-- [x] Deploy Vault (standalone, manual unseal, ingress + TLS)
-- [x] Deploy External Secrets Operator
+- [ ] Deploy Vault (standalone, manual unseal, ingress + TLS)
+- [ ] Deploy External Secrets Operator
 - [ ] Bootstrap Vault: init, unseal, KV engine, Kubernetes auth
 - [ ] Wire ESO → Vault via ClusterSecretStore
 - [ ] Migrate Grafana admin password out of plaintext values into Vault
@@ -29,7 +29,7 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 - **BUG-01** — ESO `SecretStore` and `ClusterSecretStore` CRDs silently skipped by ArgoCD
   - Symptom: ESO controller crashes with `no matches for kind "ClusterSecretStore" in version "external-secrets.io/v1"`. CRDs present in chart but missing from cluster.
   - Cause: CRD schemas exceed `kubectl apply` annotation size limit; ArgoCD drops them silently with client-side apply.
-  - Fix: Added `ServerSideApply=true` to `apps/external-secrets.yaml` syncOptions.
+  - Fix: `ServerSideApply=true` in `apps/external-secrets.yaml` syncOptions. Must also refresh root app first so the Application object itself is updated before re-syncing ESO.
 
 ### Tech Debt
 
