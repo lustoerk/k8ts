@@ -18,6 +18,9 @@ spec:
         skipCrds: true
         valueFiles:
           - $values/infra/monitoring/values.yaml
+    - repoURL: https://github.com/lustoerk/k8ts.git
+      targetRevision: main
+      path: infra/monitoring/manifests
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
