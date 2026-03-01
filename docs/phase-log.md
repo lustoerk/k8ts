@@ -17,9 +17,9 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Tasks
 
-- [ ] Scaffold `infra/monitoring` directory
-- [ ] Add `apps/monitoring.yaml` ArgoCD Application (kube-prometheus-stack)
-- [ ] Configure `values.yaml` for arm64 compatibility
+- [x] Scaffold `infra/monitoring` directory
+- [x] Add `apps/monitoring.yaml` ArgoCD Application (kube-prometheus-stack)
+- [x] Configure `values.yaml` for arm64 compatibility
 - [ ] Verify Prometheus/Grafana ingress and TLS
 
 ### Bugs / Unplanned Work

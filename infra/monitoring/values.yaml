@@ -1,0 +1,52 @@
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    nodeSelector:
+      kubernetes.io/arch: arm64
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  adminPassword: homelab
+  nodeSelector:
+    kubernetes.io/arch: arm64
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-ca
+    hosts:
+      - grafana.homelab.local
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.homelab.local
+
+alertmanager:
+  alertmanagerSpec:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: "null"
+    receivers:
+      - name: "null"
+
+nodeExporter:
+  enabled: true
+
+kube-state-metrics:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
+prometheusOperator:
+  nodeSelector:
+    kubernetes.io/arch: arm64
