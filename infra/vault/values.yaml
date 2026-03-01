@@ -49,6 +49,7 @@ server:
           - vault.homelab
 
 injector:
+  affinity: ""
   resources:
     requests:
       cpu: 10m
