@@ -20,8 +20,8 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 ### Tasks
 
 - [x] Deploy Keycloak (Helm, standalone, ingress + TLS at `keycloak.homelab`)
-- [ ] Bootstrap Keycloak realm and admin credentials (stored in Vault)
-- [ ] Configure Grafana OAuth via Keycloak
+- [x] Bootstrap Keycloak realm and admin credentials (stored in Vault)
+- [x] Configure Grafana OAuth via Keycloak
 - [ ] Configure ArgoCD SSO via Keycloak
 
 ### Bugs / Unplanned Work
@@ -40,6 +40,21 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 - Symptom: `ERROR: hostname is not configured; either configure hostname, or set hostname-strict to false`
 - Cause: Keycloak 26 enforces hostname configuration in production mode; no hostname was set
 - Fix: Added `KC_HOSTNAME=keycloak.homelab` and `KC_HOSTNAME_STRICT=false` to `extraEnv`
+
+**BUG-04: Grafana OAuth redirect_uri rejected by Keycloak**
+- Symptom: Keycloak error page "Invalid parameter: redirect_uri"
+- Cause: `root_url` not set in Grafana; pod derives callback scheme from internal request (`http://`), which doesn't match the `https://graf.homelab/*` URI registered in the Keycloak client
+- Fix: Added `server.root_url: https://graf.homelab` to `grafana.ini`
+
+**BUG-05: Grafana login denied — missing PKCE code_challenge**
+- Symptom: Grafana log `error=invalid_request errorDesc="Missing parameter: code_challenge_method"`
+- Cause: Keycloak client has `pkce.code.challenge.method: S256` enforced in the realm JSON, but Grafana wasn't sending the PKCE challenge
+- Fix: Added `use_pkce: true` to `auth.generic_oauth` in `grafana.ini`
+
+**BUG-06: Grafana OAuth token exchange fails — keycloak.homelab not resolvable in-cluster**
+- Symptom: Grafana log `dial tcp: lookup keycloak.homelab on 10.96.0.10:53: server misbehaving`
+- Cause: `keycloak.homelab` only exists in the host `/etc/hosts`; CoreDNS has no record of it, so pod→pod backchannel calls (token exchange, userinfo) fail
+- Fix: Changed `token_url` and `api_url` to use `http://keycloak-keycloakx-http.keycloak.svc.cluster.local:80/...`; `auth_url` remains the public hostname (browser-facing)
 
 ### Tech Debt
 
