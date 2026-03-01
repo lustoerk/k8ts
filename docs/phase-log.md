@@ -26,7 +26,10 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Bugs / Unplanned Work
 
-None.
+- **BUG-01** — ESO `SecretStore` and `ClusterSecretStore` CRDs silently skipped by ArgoCD
+  - Symptom: ESO controller crashes with `no matches for kind "ClusterSecretStore" in version "external-secrets.io/v1"`. CRDs present in chart but missing from cluster.
+  - Cause: CRD schemas exceed `kubectl apply` annotation size limit; ArgoCD drops them silently with client-side apply.
+  - Fix: Added `ServerSideApply=true` to `apps/external-secrets.yaml` syncOptions.
 
 ### Tech Debt
 
