@@ -1,5 +1,9 @@
 replicaCount: 1
 
+# Pin to major version tag — chart's patch-level tags lag Docker Hub publishing
+image:
+  tag: "26"
+
 # KC 26 style — tells Keycloak it's behind a TLS-terminating proxy (nginx ingress)
 proxyHeaders: xforwarded
 production: false
@@ -32,6 +36,9 @@ ingress:
 
 postgresql:
   enabled: true
+  # Pin to major version tag — chart's patch-level tags lag Docker Hub publishing
+  image:
+    tag: "17"
   auth:
     database: keycloak
     username: keycloak
