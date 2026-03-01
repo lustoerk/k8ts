@@ -4,7 +4,7 @@ Phase: Phase 2 complete.
 State: Cluster running. ArgoCD syncing from GitHub. All Phase 2 apps healthy:
        cert-manager, cert-manager-issuers, ingress-nginx, seaweedfs all Synced/Healthy.
        monitoring (kube-prometheus-stack) Synced/Healthy — Prometheus, Grafana, Alertmanager running.
-       Grafana accessible at https://grafana.homelab.local (requires minikube tunnel + /etc/hosts entry).
+       Services accessible via ingress: argo.local, prom.local, graf.local, alman.local, s3.local (requires minikube tunnel + /etc/hosts ClusterIP entry).
        Alertmanager running with null receiver (no active alerting — architectural completeness only).
        Phase 3 (Vault+ESO) attempted, reverted — restarting fresh next session.
 Blockers: None.
