@@ -21,8 +21,8 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Tasks
 
-- [ ] Audit current resource usage across all pods (metrics-server / `kubectl top`)
-- [ ] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
+- [x] Define and apply CPU/memory requests and limits for all Helm-managed services
 - [ ] Validate cluster stability under constrained resources
 - [ ] Update Grafana dashboards to visualize resource usage vs. limits
 

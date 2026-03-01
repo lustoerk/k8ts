@@ -15,6 +15,13 @@ prometheus:
     retention: 15d
     nodeSelector:
       kubernetes.io/arch: arm64
+    resources:
+      requests:
+        cpu: 100m
+        memory: 1200Mi
+      limits:
+        cpu: 500m
+        memory: 2000Mi
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -25,6 +32,13 @@ prometheus:
               storage: 10Gi
 
 grafana:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 400Mi
+    limits:
+      cpu: 200m
+      memory: 600Mi
   admin:
     existingSecret: grafana-admin
     passwordKey: admin-password
@@ -75,6 +89,13 @@ alertmanager:
   alertmanagerSpec:
     nodeSelector:
       kubernetes.io/arch: arm64
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   config:
     global:
       resolve_timeout: 5m
@@ -88,12 +109,33 @@ nodeExporter:
 
 prometheus-node-exporter:
   namespaceOverride: monitoring
+  resources:
+    requests:
+      cpu: 10m
+      memory: 40Mi
+    limits:
+      cpu: 100m
+      memory: 80Mi
 
 kube-state-metrics:
   namespaceOverride: monitoring
   nodeSelector:
     kubernetes.io/arch: arm64
+  resources:
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 200Mi
 
 prometheusOperator:
   nodeSelector:
     kubernetes.io/arch: arm64
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi

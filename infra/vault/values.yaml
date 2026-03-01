@@ -4,6 +4,13 @@ global:
 server:
   nodeSelector:
     kubernetes.io/arch: arm64
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
   standalone:
     enabled: true
@@ -40,6 +47,15 @@ server:
       - secretName: vault-tls
         hosts:
           - vault.homelab
+
+injector:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
 ui:
   enabled: true

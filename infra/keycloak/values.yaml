@@ -33,6 +33,14 @@ database:
   existingSecret: keycloak-postgres
   existingSecretKey: password
 
+resources:
+  requests:
+    cpu: 100m
+    memory: 900Mi
+  limits:
+    cpu: 1000m
+    memory: 1500Mi
+
 nodeSelector:
   kubernetes.io/arch: arm64
 
