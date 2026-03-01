@@ -44,3 +44,14 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
   - Symptom: `curl: (7) Failed to connect to argo.homelab port 443` despite tunnel running.
   - Cause: With the qemu2 driver, `minikube tunnel` routes the cluster CIDR (`10.96.0.0/12`) via the VM IP — LoadBalancer services keep their ClusterIP as EXTERNAL-IP. The Docker driver routes to `127.0.0.1` instead.
   - Fix: `/etc/hosts` entry must use the ingress-nginx ClusterIP (`kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.clusterIP}'`), not `127.0.0.1`.
+
+- **BUG-03** — kube-prometheus-stack large CRDs lost; Prometheus + Alertmanager pods down
+  - Symptom: Forced syncs on the monitoring app (prune: true, OutOfSync due to floating `82.x.x` version) caused ArgoCD to prune large CRDs (prometheuses, alertmanagers, scrapeconfigs, etc.). ArgoCD then cannot recreate them — fails with `metadata.annotations: Too long` even with `ServerSideApply=true`, because ArgoCD's ServerSideApply syncOption does NOT apply to CRDs in Helm's `crds/` directory (those bypass the syncOption and use client-side apply).
+  - Partial fix applied: `helm.skipCrds: true` added to `apps/monitoring.yaml`; CRDs manually restored via `helm template --include-crds | kubectl apply --server-side`.
+  - Remaining issue: Prometheus-operator admission webhook has a stale cert (caBundle in ValidatingWebhookConfiguration doesn't match the cert in the admission secret). Operator cannot reconcile Prometheus/Alertmanager CRs. StatefulSets not created. prom.homelab and alman.homelab return 503.
+  - Not blocking Phase 3. Deferred — see DEBT-02.
+
+- **DEBT-02** — Prometheus + Alertmanager pods need to be restored after BUG-03
+  - Fix path: Delete and recreate the `monitoring-kube-prometheus-admission` secret, then trigger the admission-patch job to update the webhook caBundle. Or: `kubectl delete validatingwebhookconfiguration monitoring-kube-prometheus-admission` and let the operator recreate it.
+  - Guard rule learned: **Never force-sync a Healthy+OutOfSync app with prune: true.** The monitoring OutOfSync was benign (floating chart version). Stop after 2 failed recovery attempts — declare debt and move on.
+  - Guard rule learned: kube-prometheus-stack CRD size issue is the same class as ESO BUG-01. Correct fix on first encounter: `kubectl apply --server-side --include-crds` + `helm.skipCrds: true`. Do not fight ArgoCD for more than one attempt.

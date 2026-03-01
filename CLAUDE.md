@@ -44,15 +44,24 @@ Do not assume phase status from file presence alone.
 - SeaweedFS FUSE: use `--mount-string` or hostPath, not a CSI driver
 - cert-manager: use a separate ArgoCD Application for issuers — sync waves are unreliable for CRD ordering
 - ArgoCD Helm chart: upstream uses `server.` prefix in values — easy to miss
+- minikube tunnel + qemu2: LoadBalancer EXTERNAL-IP stays as ClusterIP, not 127.0.0.1 — /etc/hosts must use the ClusterIP
+- Do NOT use `.local` TLD for homelab hostnames — macOS reserves `.local` for mDNS (Bonjour)
+- Large Helm CRDs (kube-prometheus-stack, ESO): ArgoCD's `ServerSideApply=true` syncOption does NOT apply to CRDs in a chart's `crds/` directory — those always use client-side apply and hit the 262144-byte annotation limit. Fix: `helm.skipCrds: true` in the Application + one-time `helm template --include-crds | kubectl apply --server-side`
 
 ## Behavior Rules
 
 **Never do without being explicitly asked:**
 - `kubectl apply` anything directly
+- Force-sync an ArgoCD Application that is **Healthy + OutOfSync** — this state is often benign (floating chart version, label drift). Investigate with `argocd app diff` first; never patch/force-sync blindly.
+- Force-sync any Application with `prune: true` without first confirming via diff what would be pruned.
 
 **Always do:**
 - Run `helm template` at minimum before declaring a task done
 - Stop and ask when a Helm chart value is ambiguous or a decision isn't covered by the ADRs
+- After two failed recovery attempts on the same error, stop, declare a DEBT entry, and move on. Do not loop.
+
+**Troubleshooting exit rule:**
+If the same error persists after two distinct fix attempts, treat it as deferred debt unless it is blocking the current phase goal. Ask the user before attempting a third approach.
 
 **Never do unprompted:**
 - Create README or documentation files
