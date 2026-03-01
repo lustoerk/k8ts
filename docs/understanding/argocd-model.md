@@ -102,6 +102,23 @@ The upstream Helm chart comes from its own chart repository. The values override
 
 This keeps chart versions and our configuration clearly separated.
 
+Some apps use a **third source** — a raw manifest path in this repo — for supplementary resources that don't belong in the Helm chart (e.g. custom Grafana dashboard ConfigMaps):
+
+```yaml
+sources:
+  - repoURL: https://github.com/lustoerk/k8ts.git
+    targetRevision: main
+    ref: values
+  - repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    ...
+  - repoURL: https://github.com/lustoerk/k8ts.git
+    targetRevision: main
+    path: infra/monitoring/manifests     # raw manifests applied alongside the chart
+```
+
+**Important:** changes to a child Application's `sources` list only take effect after the **root app is synced** — the root app owns the Application objects in the cluster.
+
 ---
 
 ## The Causal Chain

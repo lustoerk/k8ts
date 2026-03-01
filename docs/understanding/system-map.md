@@ -68,8 +68,8 @@ Not running yet, planned for future phases:
 | ~~SOPS~~ | ~~3~~ | ~~Secret encryption at rest in git~~ — **dropped; Vault+ESO covers this** |
 | ~~Vault + ESO~~ | ~~3~~ | ~~Centralized secrets management~~ — **deployed Phase 3** |
 | ~~Keycloak~~ | ~~4~~ | ~~Identity and SSO~~ — **deployed Phase 4** |
-| GitLab | 5 | Self-hosted git remote (replaces GitHub), learning phase |
-| GitLab Runner | 6+ | CI pipelines |
+| GitLab / Forgejo | 8 | Self-hosted git remote (replaces GitHub), learning phase |
+| GitLab Runner | 8+ | CI pipelines |
 | Network Policies | TBD | Namespace-level traffic isolation; not critical pre-Keycloak/GitLab but worth adding in Phase 4/5 as blast-radius practice |
 | Alertmanager receiver | TBD | Wire Alertmanager to a real destination (Slack webhook, email). Currently null receiver — alerts fire and are discarded. Planned as an add-on once Vault is stable (credentials for webhook can be stored in Vault). |
-| Resource requests/limits | TBD | No CPU/memory requests set on any workload (DEBT-04). Required before adding Vault + Keycloak to avoid OOM on the minikube VM. |
+| ~~Resource requests/limits~~ | ~~5~~ | ~~DEBT-04~~ — **closed Phase 5. All services have requests/limits. Custom Grafana dashboard deployed.** |
