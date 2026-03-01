@@ -26,5 +26,10 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Bugs / Unplanned Work
 
+**BUG-01: realm-import-prep init container crashes with "Invalid back reference"**
+- Symptom: `keycloak-keycloakx-0` stuck in `Init:CrashLoopBackOff`; init container log: `sed: bad regex '...': Invalid back reference`
+- Cause: `sed` replacement string receives secret value containing `\2` (and similar `\N` sequences), which sed interprets as a regex backreference
+- Fix: Replaced `sed` with `envsubst` (Alpine `gettext`); updated realm ConfigMap placeholders from `$(VAR)` to `${VAR}` syntax
+
 ### Tech Debt
 

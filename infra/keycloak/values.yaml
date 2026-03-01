@@ -61,10 +61,9 @@ extraInitContainers: |
       - sh
       - -c
       - |
-        sed \
-          -e "s/\$(GRAFANA_CLIENT_SECRET)/${GRAFANA_CLIENT_SECRET}/g" \
-          -e "s/\$(ARGOCD_CLIENT_SECRET)/${ARGOCD_CLIENT_SECRET}/g" \
-          /realm-template/homelab.json > /realm-import/homelab.json
+        apk add --no-cache gettext && \
+        envsubst '${GRAFANA_CLIENT_SECRET} ${ARGOCD_CLIENT_SECRET}' \
+          < /realm-template/homelab.json > /realm-import/homelab.json
     env:
       - name: GRAFANA_CLIENT_SECRET
         valueFrom:
