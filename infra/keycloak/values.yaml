@@ -19,6 +19,10 @@ extraEnv: |
       secretKeyRef:
         name: keycloak-admin
         key: admin-password
+  - name: KC_HOSTNAME
+    value: keycloak.homelab
+  - name: KC_HOSTNAME_STRICT
+    value: "false"
 
 database:
   vendor: postgres
