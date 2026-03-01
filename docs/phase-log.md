@@ -22,7 +22,7 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 - [x] Deploy Keycloak (Helm, standalone, ingress + TLS at `keycloak.homelab`)
 - [x] Bootstrap Keycloak realm and admin credentials (stored in Vault)
 - [x] Configure Grafana OAuth via Keycloak
-- [ ] Configure ArgoCD SSO via Keycloak
+- [x] Configure ArgoCD SSO via Keycloak
 
 ### Bugs / Unplanned Work
 
@@ -55,6 +55,17 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 - Symptom: Grafana log `dial tcp: lookup keycloak.homelab on 10.96.0.10:53: server misbehaving`
 - Cause: `keycloak.homelab` only exists in the host `/etc/hosts`; CoreDNS has no record of it, so pod→pod backchannel calls (token exchange, userinfo) fail
 - Fix: Changed `token_url` and `api_url` to use `http://keycloak-keycloakx-http.keycloak.svc.cluster.local:80/...`; `auth_url` remains the public hostname (browser-facing)
+
+**BUG-07: ArgoCD OIDC fails — keycloak.homelab not resolvable in-cluster**
+- Symptom: ArgoCD log `failed to query provider: oidc: issuer did not match... expected "https://..." got "http://..."`
+- Cause: `keycloak.homelab` not in CoreDNS; ArgoCD server pod could not reach the OIDC discovery endpoint. Fixed DNS, but the discovery doc still returned `http://` issuer because Keycloak wasn't reading `X-Forwarded-Proto` from nginx
+- Fix: Patched CoreDNS `kube-system/coredns` ConfigMap to add `10.107.140.105 keycloak.homelab` in the `hosts` block; added homelab CA cert as `rootCA` in `argocd-cm.yaml` `oidc.config`
+
+**BUG-08: Keycloak issuer returns http:// despite HTTPS ingress**
+- Symptom: Discovery doc `issuer` field returns `http://keycloak.homelab/...` even when accessed via `https://`
+- Cause (attempt 1): `KC_PROXY_HEADERS=xforwarded` in `extraEnv` was silently overridden by the chart's hardcoded `KC_PROXY_HEADERS=forwarded` — first env var occurrence wins in containerd
+- Cause (attempt 2): `KC_HOSTNAME_URL` is deprecated Keycloak v1 hostname SPI syntax; ignored in KC 26 hostname v2 with a warning
+- Fix: `KC_HOSTNAME=https://keycloak.homelab` — in Keycloak 24+ hostname v2, `KC_HOSTNAME` accepts a full URL including scheme, explicitly pinning the issuer to `https://`
 
 ### Tech Debt
 
