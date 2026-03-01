@@ -1,0 +1,10 @@
+nodeSelector:
+  kubernetes.io/arch: arm64
+
+webhook:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
+certController:
+  nodeSelector:
+    kubernetes.io/arch: arm64
