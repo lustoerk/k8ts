@@ -23,6 +23,8 @@ extraEnv: |
     value: keycloak.homelab
   - name: KC_HOSTNAME_STRICT
     value: "false"
+  - name: KC_PROXY_HEADERS
+    value: xforwarded
 
 database:
   vendor: postgres
