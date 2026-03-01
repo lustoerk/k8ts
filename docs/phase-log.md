@@ -51,7 +51,10 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
   - Remaining issue: Prometheus-operator admission webhook has a stale cert (caBundle in ValidatingWebhookConfiguration doesn't match the cert in the admission secret). Operator cannot reconcile Prometheus/Alertmanager CRs. StatefulSets not created. prom.homelab and alman.homelab return 503.
   - Not blocking Phase 3. Deferred — see DEBT-02.
 
-- **DEBT-02** — Prometheus + Alertmanager pods need to be restored after BUG-03
-  - Fix path: Delete and recreate the `monitoring-kube-prometheus-admission` secret, then trigger the admission-patch job to update the webhook caBundle. Or: `kubectl delete validatingwebhookconfiguration monitoring-kube-prometheus-admission` and let the operator recreate it.
+- **DEBT-02** — Prometheus + Alertmanager pods restored. **RESOLVED.**
+  - Root cause (clarified): The operator restarted **before** the CRDs were restored. On startup it logged `resource "prometheuses" not installed in the cluster` and disabled those controllers permanently for that process lifetime. CRDs came back later but operator never re-detected them.
+  - The stale caBundle was a red herring — both webhooks are `failurePolicy: Ignore`, so TLS mismatches were noise.
+  - Fix: `kubectl patch validatingwebhookconfiguration` to align caBundle with secret CA (cosmetic cleanup), then `kubectl delete pod` on the operator to force a restart. Operator re-discovered CRDs, reconciled CRs, StatefulSets up in 33s. prom.homelab and alman.homelab healthy.
   - Guard rule learned: **Never force-sync a Healthy+OutOfSync app with prune: true.** The monitoring OutOfSync was benign (floating chart version). Stop after 2 failed recovery attempts — declare debt and move on.
   - Guard rule learned: kube-prometheus-stack CRD size issue is the same class as ESO BUG-01. Correct fix on first encounter: `kubectl apply --server-side --include-crds` + `helm.skipCrds: true`. Do not fight ArgoCD for more than one attempt.
+  - Guard rule learned: If prometheus-operator starts before its CRDs are installed, it silently disables Prometheus/Alertmanager controllers. Symptom: CRs exist, no StatefulSets, no reconciliation log entries. Fix: restart the operator pod.
