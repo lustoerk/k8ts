@@ -15,6 +15,7 @@ spec:
       chart: kube-prometheus-stack
       targetRevision: "82.x.x"
       helm:
+        skipCrds: true
         valueFiles:
           - $values/infra/monitoring/values.yaml
   destination:
