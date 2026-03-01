@@ -86,7 +86,11 @@ alertmanager:
 nodeExporter:
   enabled: true
 
+prometheus-node-exporter:
+  namespaceOverride: monitoring
+
 kube-state-metrics:
+  namespaceOverride: monitoring
   nodeSelector:
     kubernetes.io/arch: arm64
 
