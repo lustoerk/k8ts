@@ -19,7 +19,7 @@ extraEnv: |
       secretKeyRef:
         name: keycloak-admin
         key: admin-password
-  - name: KC_HOSTNAME_URL
+  - name: KC_HOSTNAME
     value: https://keycloak.homelab
   - name: KC_HOSTNAME_STRICT
     value: "false"
