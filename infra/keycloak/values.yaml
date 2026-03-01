@@ -1,0 +1,58 @@
+replicaCount: 1
+
+# KC 26 style — tells Keycloak it's behind a TLS-terminating proxy (nginx ingress)
+proxyHeaders: xforwarded
+production: false
+
+auth:
+  adminUser: admin
+  existingSecret: keycloak-admin
+  passwordSecretKey: admin-password
+
+nodeSelector:
+  kubernetes.io/arch: arm64
+
+tls:
+  enabled: false
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: homelab-ca
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hostname: keycloak.homelab
+  tls: false
+  selfSigned: false
+  extraTls:
+    - secretName: keycloak-tls
+      hosts:
+        - keycloak.homelab
+
+postgresql:
+  enabled: true
+  auth:
+    database: keycloak
+    username: keycloak
+    existingSecret: keycloak-postgres
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
+  primary:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+    persistence:
+      enabled: true
+      storageClass: standard
+      size: 2Gi
+
+keycloakConfigCli:
+  enabled: true
+  # ConfigMap deployed alongside this app in infra/keycloak/manifests/
+  existingConfigmap: keycloak-realm-config
+  # ESO-managed secret with GRAFANA_CLIENT_SECRET and ARGOCD_CLIENT_SECRET from Vault
+  extraEnvVarsSecret: keycloak-client-secrets
+  cleanupAfterFinished:
+    enabled: true
+    seconds: 600

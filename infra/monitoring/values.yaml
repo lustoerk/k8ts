@@ -30,6 +30,20 @@ grafana:
     passwordKey: admin-password
   nodeSelector:
     kubernetes.io/arch: arm64
+  # ESO-managed secret in monitoring ns; provides GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+  envFromSecret: grafana-oauth
+  grafana.ini:
+    auth.generic_oauth:
+      enabled: true
+      name: Keycloak
+      allow_sign_up: true
+      client_id: grafana
+      client_secret: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+      scopes: openid email profile
+      auth_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/auth
+      token_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/token
+      api_url: https://keycloak.homelab/realms/homelab/protocol/openid-connect/userinfo
+      role_attribute_path: contains(groups[*], 'admin') && 'Admin' || 'Viewer'
   ingress:
     enabled: true
     ingressClassName: nginx
