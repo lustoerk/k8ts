@@ -15,28 +15,71 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ---
 
-## Phase 5 — Resource Limits & Hardening
+## Phase 5 — Resource Limits & Requests `<-- current`
 
 **Date:** 2026-03-01
 
 ### Tasks
 
-- [ ] Implement DEBT-04: Resource requests/limits for all workloads (Prometheus, Keycloak, Vault, etc.)
-- [ ] Fix CoreDNS GitOps (move from manual patch to declarative ConfigMap)
-- [ ] Document "Bootstrap from Zero" disaster recovery procedure
+- [ ] Audit current resource usage across all pods (metrics-server / `kubectl top`)
+- [ ] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [ ] Validate cluster stability under constrained resources
+- [ ] Update Grafana dashboards to visualize resource usage vs. limits
+
+### Bugs / Unplanned Work
+
+### Tech Debt
 
 ---
 
-## Phase 6 — GitLab (DEFERRED)
+## Phase 6 — SeaweedFS Review & Integration
 
 **Date:** TBD
 
 ### Tasks
 
-- [ ] Deploy GitLab (self-hosted, ingress + TLS at `gitlab.homelab`)
-- [ ] Migrate git remote from GitHub to GitLab
-- [ ] Configure ArgoCD to sync from GitLab
-- [ ] Configure Keycloak SSO for GitLab
+- [ ] Enable S3 authentication (access key / secret key)
+- [ ] Store S3 credentials in Vault, sync via ESO
+- [ ] Enable SeaweedFS Prometheus metrics + add ServiceMonitor
+- [ ] Build Grafana dashboard for SeaweedFS (capacity, request rate, latency)
+- [ ] Expose SeaweedFS admin UI via ingress (`seaweedfs.homelab`)
+- [ ] Evaluate Keycloak integration for admin UI access (OAuth2 proxy or native)
+- [ ] Deploy a small test workload that reads/writes to the S3 endpoint
+- [ ] Document S3 usage patterns for future workloads
+
+### Bugs / Unplanned Work
+
+### Tech Debt
+
+---
+
+## Phase 7 — Operational Hardening
+
+**Date:** TBD
+
+### Tasks
+
+- [ ] Declarative CoreDNS — replace manual `hosts` patching with GitOps-managed ConfigMap
+- [ ] Vault auto-unseal or break-glass procedure
+- [ ] Document "Bootstrap from Zero" disaster recovery runbook
+- [ ] Persistent storage — mount macOS host folders into minikube for data survival
+- [ ] /etc/hosts automation (script or LaunchAgent)
+
+### Bugs / Unplanned Work
+
+### Tech Debt
+
+---
+
+## Phase 8 — New Applications (TBD)
+
+**Date:** TBD
+
+### Tasks
+
+- [ ] Forgejo or GitLab (self-hosted SCM + CI, Keycloak SSO)
+- [ ] AI/ML workload using SeaweedFS S3 for model/data storage
+- [ ] Additional Keycloak-integrated services as needed
 
 ### Bugs / Unplanned Work
 
