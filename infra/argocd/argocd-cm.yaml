@@ -115,3 +115,14 @@ data:
       - profile
       - email
       - groups
+    rootCA: |
+      -----BEGIN CERTIFICATE-----
+      MIIBajCCARGgAwIBAgIRAKLDgamXiK3a7z+Jdd6SqhMwCgYIKoZIzj0EAwIwFTET
+      MBEGA1UEAxMKaG9tZWxhYi1jYTAeFw0yNjAzMDEwMDA4MzBaFw0yNjA1MzAwMDA4
+      MzBaMBUxEzARBgNVBAMTCmhvbWVsYWItY2EwWTATBgcqhkjOPQIBBggqhkjOPQMB
+      BwNCAASaWC+KRa2PNgWmdyC3GYZArlaUpm9hosm9EFnMI0N//uJoUeBatjenNyIt
+      muInzzkcemLFzEsIjIPmL7o5XBWRo0IwQDAOBgNVHQ8BAf8EBAMCAqQwDwYDVR0T
+      AQH/BAUwAwEB/zAdBgNVHQ4EFgQUKu5VHNSaQlLavyfmnsmrEFppttowCgYIKoZI
+      zj0EAwIDRwAwRAIgJTa14Y08fmolYR5slx/M/CYoDM5XyYqa/9o99++h/jwCIBYt
+      OelXfo1K6mGBXoE++ti+XyeM0Igen1MurwfMs/r/
+      -----END CERTIFICATE-----
