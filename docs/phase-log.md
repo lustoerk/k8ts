@@ -32,6 +32,14 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
   - Symptom: `read` returns non-zero when stdin is not a terminal, causing the script to exit before `kubectl apply root-app.yaml`, leaving root-app unapplied.
   - Fix: Changed to `read -r -p "..." || true` so non-interactive shells continue past the prompt.
 
+- **BUG-03** — `bootstrap.sh` cannot be run from a subprocess (Claude Code, CI) due to socket_vmnet fd passing restrictions
+  - Symptom: `minikube start` fails with `Unable to query local socket address: Operation not supported on socket` when invoked from a child process.
+  - Fix: Script is correct. Constraint: `bootstrap.sh` must be run from a direct terminal session on macOS with qemu2+socket_vmnet.
+
+- **BUG-04** — socket_vmnet enters broken state after `minikube delete`, blocking subsequent `minikube start`
+  - Symptom: `Unable to query local socket address` or `Connection refused` on `/opt/homebrew/var/run/socket_vmnet` after cluster teardown.
+  - Fix: `sudo launchctl unload /Library/LaunchDaemons/homebrew.mxcl.socket_vmnet.plist && sudo launchctl load /Library/LaunchDaemons/homebrew.mxcl.socket_vmnet.plist`
+
 ### Tech Debt
 
 None.
