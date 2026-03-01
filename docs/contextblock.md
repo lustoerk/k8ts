@@ -7,7 +7,7 @@ State: Cluster running. ArgoCD syncing from GitHub. All Phase 2 apps healthy:
        Grafana accessible at https://grafana.homelab.local (requires minikube tunnel + /etc/hosts entry).
        Alertmanager running with null receiver (no active alerting — architectural completeness only).
 Blockers: None.
-Next: Phase 3 — Secrets Encryption (SOPS).
+Next: Phase 3 — Vault + ESO.
 History: Bootstrap fixed (BUG-01, BUG-02). Monitoring deployed (BUG-05).
 
 Hardware: MacBook Pro Nov 2024, Apple M4 Max, 128GB, Tahoe 26.3, minikube qemu2 driver.
@@ -17,4 +17,5 @@ Stack in scope (Phase 2):
 minikube, ArgoCD, cert-manager, ingress-nginx, SeaweedFS, kube-prometheus-stack
 
 Deferred:
-SOPS (Phase 3), Vault+ESO (Phase 4), GitLab (Phase 5), Runner (Phase 6), Keycloak (Phase 7)
+Keycloak (Phase 4), Learning phase (Phase 5), GitLab (Phase 6+)
+SOPS: dropped — Vault+ESO covers secrets management end-to-end.

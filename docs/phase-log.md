@@ -12,13 +12,17 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ---
 
-## Phase 3 — Secrets Encryption (SOPS)
+## Phase 3 — Vault + ESO
 
 **Date:** TBD
 
 ### Tasks
 
-- [ ] TBD
+- [ ] Deploy Vault (standalone, manual unseal, ingress + TLS)
+- [ ] Deploy External Secrets Operator
+- [ ] Bootstrap Vault: init, unseal, KV engine, Kubernetes auth
+- [ ] Wire ESO → Vault via ClusterSecretStore
+- [ ] Migrate Grafana admin password out of plaintext values into Vault
 
 ### Bugs / Unplanned Work
 
