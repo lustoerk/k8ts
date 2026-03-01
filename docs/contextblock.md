@@ -1,19 +1,20 @@
 Context Block
-Date: 2026-02-28
-Phase: Phase 1 complete. Day 1 done.
-State: Cluster running. ArgoCD installed and syncing from GitHub. All Phase 1 apps healthy:
+Date: 2026-03-01
+Phase: Phase 2 complete.
+State: Cluster running. ArgoCD syncing from GitHub. All Phase 2 apps healthy:
        cert-manager, cert-manager-issuers, ingress-nginx, seaweedfs all Synced/Healthy.
-       ingress-nginx LoadBalancer pending until `minikube tunnel` is active (expected).
+       monitoring (kube-prometheus-stack) Synced/Healthy — Prometheus, Grafana, Alertmanager running.
+       Grafana accessible at https://grafana.homelab.local (requires minikube tunnel + /etc/hosts entry).
+       Alertmanager running with null receiver (no active alerting — architectural completeness only).
 Blockers: None.
-Next: Phase 2 — Monitoring (Prometheus + Grafana).
-History: Bootstrap fixed (BUG-01, BUG-02). Docs modularized to docs/history/.
+Next: Phase 3 — Secrets Encryption (SOPS).
+History: Bootstrap fixed (BUG-01, BUG-02). Monitoring deployed (BUG-05).
 
 Hardware: MacBook Pro Nov 2024, Apple M4 Max, 128GB, Tahoe 26.3, minikube qemu2 driver.
 Repo: GitHub private (https://github.com/lustoerk/k8ts.git), migrating to self-hosted GitLab in Phase 5.
 
-Stack in scope (Phase 1):
-minikube, ArgoCD, cert-manager, ingress-nginx, SeaweedFS
+Stack in scope (Phase 2):
+minikube, ArgoCD, cert-manager, ingress-nginx, SeaweedFS, kube-prometheus-stack
 
 Deferred:
-Monitoring (Phase 2), SOPS (Phase 3), Vault+ESO (Phase 4),
-GitLab (Phase 5), Runner (Phase 6), Keycloak (Phase 7)
+SOPS (Phase 3), Vault+ESO (Phase 4), GitLab (Phase 5), Runner (Phase 6), Keycloak (Phase 7)

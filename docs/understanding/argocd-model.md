@@ -46,7 +46,7 @@ annotations:
 annotations:
   argocd.argoproj.io/sync-wave: "1"
 
-# apps/seaweedfs.yaml
+# apps/seaweedfs.yaml, apps/monitoring.yaml
 annotations:
   argocd.argoproj.io/sync-wave: "2"
 ```
@@ -59,7 +59,7 @@ Current wave ordering:
 |------|------|
 | 0 | cert-manager |
 | 1 | cert-manager-issuers, ingress-nginx |
-| 2 | seaweedfs |
+| 2 | seaweedfs, monitoring |
 
 ---
 

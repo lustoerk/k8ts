@@ -14,6 +14,7 @@ For decisions, see `docs/adrs/`. For current phase state, see `docs/contextblock
 | cert-manager-issuers | `cert-manager` | ClusterIssuer resources | The self-signed CA chain used by all ingress TLS |
 | ingress-nginx | `ingress-nginx` | IngressClass: nginx | HTTP/HTTPS routing into the cluster |
 | seaweedfs | `seaweedfs` | StatefulSets, StorageClass | S3-compatible object storage |
+| kube-prometheus-stack | `monitoring` | Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics | Metrics collection, dashboards, alerting infrastructure |
 
 ---
 
@@ -58,7 +59,7 @@ Not running yet, planned for future phases:
 
 | Tool | Phase | Role |
 |------|-------|------|
-| Prometheus + Grafana | 2 | Metrics and dashboards |
+| ~~Prometheus + Grafana~~ | ~~2~~ | ~~Metrics and dashboards~~ — **deployed Phase 2** |
 | SOPS | 3 | Secret encryption at rest in git |
 | Vault + ESO | 4 | Dynamic secrets |
 | GitLab | 5 | Self-hosted git remote (replaces GitHub) |
