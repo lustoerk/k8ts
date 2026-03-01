@@ -58,8 +58,10 @@ Current wave ordering:
 | Wave | Apps |
 |------|------|
 | 0 | cert-manager |
-| 1 | cert-manager-issuers, ingress-nginx |
+| 1 | cert-manager-issuers, ingress-nginx, argocd-ingress |
 | 2 | seaweedfs, monitoring |
+| 3 | vault, external-secrets |
+| 4 | vault-config (**manual sync only** — must not auto-sync before Vault is initialized and unsealed) |
 
 ---
 

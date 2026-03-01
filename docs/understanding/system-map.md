@@ -15,6 +15,9 @@ For decisions, see `docs/adrs/`. For current phase state, see `docs/contextblock
 | ingress-nginx | `ingress-nginx` | IngressClass: nginx | HTTP/HTTPS routing into the cluster |
 | seaweedfs | `seaweedfs` | StatefulSets, StorageClass | S3-compatible object storage |
 | kube-prometheus-stack | `monitoring` | Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics | Metrics collection, dashboards, alerting infrastructure |
+| vault | `vault` | StatefulSet, PVC | Centralized secrets store; KV v2 at `secret/`; Kubernetes auth for ESO |
+| external-secrets | `external-secrets` | CRDs: ExternalSecret, ClusterSecretStore | Syncs secrets from Vault into Kubernetes Secrets |
+| vault-config | (cluster-scoped + `monitoring`) | ClusterSecretStore, ExternalSecret | Wires ESO to Vault; manages per-service ExternalSecrets |
 
 ---
 
@@ -61,7 +64,7 @@ Not running yet, planned for future phases:
 |------|-------|------|
 | ~~Prometheus + Grafana~~ | ~~2~~ | ~~Metrics and dashboards~~ — **deployed Phase 2** |
 | ~~SOPS~~ | ~~3~~ | ~~Secret encryption at rest in git~~ — **dropped; Vault+ESO covers this** |
-| Vault + ESO | 3 | Centralized secrets management; migrate Grafana password as validation |
+| ~~Vault + ESO~~ | ~~3~~ | ~~Centralized secrets management~~ — **deployed Phase 3** |
 | Keycloak | 4 | Identity and SSO |
 | GitLab | 5 | Self-hosted git remote (replaces GitHub), learning phase |
 | GitLab Runner | 6+ | CI pipelines |
