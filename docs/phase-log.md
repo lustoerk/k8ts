@@ -31,5 +31,15 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 - Cause: `sed` replacement string receives secret value containing `\2` (and similar `\N` sequences), which sed interprets as a regex backreference
 - Fix: Replaced `sed` with `envsubst` (Alpine `gettext`); updated realm ConfigMap placeholders from `$(VAR)` to `${VAR}` syntax
 
+**BUG-02: camunda/keycloak image incompatible with keycloakx chart**
+- Symptom: main container crashes immediately; log: `/opt/bitnami/scripts/keycloak/entrypoint.sh: line 35: exec: start: not found`
+- Cause: `camunda/keycloak:25` is Bitnami-based; the Bitnami entrypoint tries to `exec start` as a binary (not found), whereas the keycloakx chart is designed for the official Keycloak image which accepts `start` as a CLI subcommand
+- Fix: Changed image to `quay.io/keycloak/keycloak:26.5.3` (the chart's appVersion default)
+
+**BUG-03: Keycloak 26 production mode requires KC_HOSTNAME**
+- Symptom: `ERROR: hostname is not configured; either configure hostname, or set hostname-strict to false`
+- Cause: Keycloak 26 enforces hostname configuration in production mode; no hostname was set
+- Fix: Added `KC_HOSTNAME=keycloak.homelab` and `KC_HOSTNAME_STRICT=false` to `extraEnv`
+
 ### Tech Debt
 
