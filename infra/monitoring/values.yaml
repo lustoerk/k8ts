@@ -25,7 +25,9 @@ prometheus:
               storage: 10Gi
 
 grafana:
-  adminPassword: homelab
+  admin:
+    existingSecret: grafana-admin
+    passwordKey: admin-password
   nodeSelector:
     kubernetes.io/arch: arm64
   ingress:
