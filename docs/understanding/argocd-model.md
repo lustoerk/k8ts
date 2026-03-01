@@ -62,6 +62,8 @@ Current wave ordering:
 | 2 | seaweedfs, monitoring |
 | 3 | vault, external-secrets |
 | 4 | vault-config (**manual sync only** — must not auto-sync before Vault is initialized and unsealed) |
+| 5 | keycloak |
+| 6 | keycloak-config |
 
 ---
 
