@@ -33,6 +33,8 @@ grafana:
   # ESO-managed secret in monitoring ns; provides GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
   envFromSecret: grafana-oauth
   grafana.ini:
+    server:
+      root_url: https://graf.homelab
     auth.generic_oauth:
       enabled: true
       name: Keycloak
