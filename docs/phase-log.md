@@ -33,4 +33,8 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
 
 ### Tech Debt
 
-None.
+- **DEBT-01** — Hostname-based ingress implemented as unplanned prerequisite work before Phase 3
+  - minikube tunnel launchd daemon (`bootstrap/install-tunnel-daemon.sh`) — run once after bootstrap
+  - ArgoCD server ingress (`infra/argocd/ingress.yaml`, `apps/argocd-ingress.yaml`, wave 1)
+  - Prometheus ingress added to `infra/monitoring/values.yaml`
+  - /etc/hosts one-time manual step: `127.0.0.1 argocd.homelab.local prometheus.homelab.local grafana.homelab.local`

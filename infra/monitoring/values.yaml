@@ -1,4 +1,16 @@
 prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-ca
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    hosts:
+      - prometheus.homelab.local
+    tls:
+      - secretName: prometheus-tls
+        hosts:
+          - prometheus.homelab.local
   prometheusSpec:
     retention: 15d
     nodeSelector:
