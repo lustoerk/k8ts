@@ -51,6 +51,14 @@ Running record of work done per phase. Includes planned tasks, bugs encountered,
   - Remaining issue: Prometheus-operator admission webhook has a stale cert (caBundle in ValidatingWebhookConfiguration doesn't match the cert in the admission secret). Operator cannot reconcile Prometheus/Alertmanager CRs. StatefulSets not created. prom.homelab and alman.homelab return 503.
   - Not blocking Phase 3. Deferred — see DEBT-02.
 
+- **DEBT-03** — No /etc/hosts automation; ClusterIP must be manually updated after each `minikube delete`/`start`
+  - Current mitigation: one-time manual entry using `kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.clusterIP}'`
+  - Future fix: post-bootstrap script that reads the ClusterIP and patches `/etc/hosts`, or dnsmasq wildcard rule for `*.homelab` pointing to the ClusterIP
+
+- **DEBT-04** — No resource requests or limits on any workload
+  - Risk: on a finite-memory VM (minikube), Prometheus + Grafana + Vault + SeaweedFS could OOM the node. Scheduler has no visibility.
+  - Future fix: add `resources.requests` at minimum on Prometheus, Grafana, and Vault Helm values before Phase 4.
+
 - **DEBT-02** — Prometheus + Alertmanager pods restored. **RESOLVED.**
   - Root cause (clarified): The operator restarted **before** the CRDs were restored. On startup it logged `resource "prometheuses" not installed in the cluster` and disabled those controllers permanently for that process lifetime. CRDs came back later but operator never re-detected them.
   - The stale caBundle was a red herring — both webhooks are `failurePolicy: Ignore`, so TLS mismatches were noise.

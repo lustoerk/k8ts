@@ -70,7 +70,7 @@ Key decisions in values:
 - Standalone mode (single replica, file storage backend)
 - Internal TLS **disabled** — ingress-nginx terminates TLS via cert-manager
 - hostPath PVC via `standard` StorageClass for `/vault/data`
-- Vault UI enabled, exposed via ingress at `vault.homelab.local`
+- Vault UI enabled, exposed via ingress at `vault.homelab`
 - arm64 nodeSelector
 
 ## Step 2 — Create `apps/external-secrets.yaml` and `infra/external-secrets/values.yaml`
@@ -90,8 +90,17 @@ Push → ArgoCD syncs wave 3 → Vault pod starts (sealed), ESO pods start.
 
 ## Step 4 — Bootstrap Vault (manual, run once)
 
+> **Unseal key storage**: `vault operator init` outputs 3 unseal keys and a root token.
+> Store these offline (password manager, local file outside the repo, printed copy).
+> They must NOT be committed to git. Without them, all secrets are permanently inaccessible.
+> After a `minikube stop`/`start`, Vault will restart sealed — you will need 2 of the 3 keys to unseal.
+> After `minikube delete`, PVC data is gone and Vault must be re-initialized.
+
 ```bash
-# Exec into the Vault pod
+# Check whether Vault is already initialized (PVC may have persisted)
+kubectl exec -it vault-0 -n vault -- vault status
+
+# Only run init if "Initialized: false"
 kubectl exec -it vault-0 -n vault -- vault operator init \
   -key-shares=3 -key-threshold=2
 
@@ -182,6 +191,9 @@ No data is lost — only access is blocked until unsealed.
 - **vault-config sync timing**: ClusterSecretStore will error if synced before Vault K8s auth is configured. Controlled by manual sync — do not enable automated sync on `vault-config`.
 - **Grafana existingSecret key names**: chart expects specific key names (`admin-user`, `admin-password`) — must match what ESO writes into the K8s Secret.
 - **ESO ServiceAccount name**: confirm ESO deploys its SA as `external-secrets` in namespace `external-secrets` — this is the default but verify against rendered chart before writing the Vault role.
+- **Vault restarts sealed**: every Vault pod restart (including after `minikube stop`/`start`) leaves Vault sealed. Unseal manually with 2 keys before any ESO sync will succeed. If ESO cannot reach Vault, ExternalSecrets will fail but no data is lost.
+- **Vault data loss on `minikube delete`**: hostPath PVC is VM-local. `minikube delete` destroys all Vault data — re-init and re-populate secrets. Acceptable for a lab; document this in the runbook.
+- **No HA**: Vault runs as a single StatefulSet replica. If the pod crashes, all secrets access is interrupted until it restarts and is manually unsealed. Vault HA (Raft) deferred.
 
 ## Done When
 
@@ -190,3 +202,16 @@ No data is lost — only access is blocked until unsealed.
 - ExternalSecret `grafana-admin` shows Ready
 - Grafana login works, no plaintext password in git
 - Phase 3 tasks checked off in `docs/phase-log.md`
+
+---
+
+## Follow-up Secret Migrations (Post-Phase 3)
+
+Grafana is the only secret migrated in this phase. These remain as plain Kubernetes Secrets and should be migrated in a follow-up task or Phase 4:
+
+| Secret | Namespace | Current form | Migration path |
+|--------|-----------|-------------|---------------|
+| SeaweedFS S3 credentials | `seaweedfs` | `infra/seaweedfs/s3-credentials-secret.yaml` (plain K8s Secret) | Vault KV + ESO ExternalSecret in `seaweedfs` namespace |
+| ArgoCD repo PAT | `argocd` | K8s Secret applied during bootstrap | Vault KV + ESO, or rotate to GitHub App auth |
+
+Until migrated, these secrets are base64 in etcd, not encrypted at rest.

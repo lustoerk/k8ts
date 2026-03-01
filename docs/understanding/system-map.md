@@ -40,7 +40,7 @@ browser
       → Service → Pod
 ```
 
-`minikube tunnel` must be running in a separate terminal for external access.
+`minikube tunnel` runs as a launchd daemon (installed by `bootstrap/install-tunnel-daemon.sh`). It starts at boot as root — no manual terminal required. With the qemu2 driver, LoadBalancer EXTERNAL-IP stays as the service ClusterIP (not 127.0.0.1); `/etc/hosts` must use the ClusterIP.
 
 ---
 
@@ -60,8 +60,11 @@ Not running yet, planned for future phases:
 | Tool | Phase | Role |
 |------|-------|------|
 | ~~Prometheus + Grafana~~ | ~~2~~ | ~~Metrics and dashboards~~ — **deployed Phase 2** |
-| SOPS | 3 | Secret encryption at rest in git |
-| Vault + ESO | 4 | Dynamic secrets |
-| GitLab | 5 | Self-hosted git remote (replaces GitHub) |
-| GitLab Runner | 6 | CI pipelines |
-| Keycloak | 7 | Identity and SSO |
+| ~~SOPS~~ | ~~3~~ | ~~Secret encryption at rest in git~~ — **dropped; Vault+ESO covers this** |
+| Vault + ESO | 3 | Centralized secrets management; migrate Grafana password as validation |
+| Keycloak | 4 | Identity and SSO |
+| GitLab | 5 | Self-hosted git remote (replaces GitHub), learning phase |
+| GitLab Runner | 6+ | CI pipelines |
+| Network Policies | TBD | Namespace-level traffic isolation; not critical pre-Keycloak/GitLab but worth adding in Phase 4/5 as blast-radius practice |
+| Alertmanager receiver | TBD | Wire Alertmanager to a real destination (Slack webhook, email). Currently null receiver — alerts fire and are discarded. Planned as an add-on once Vault is stable (credentials for webhook can be stored in Vault). |
+| Resource requests/limits | TBD | No CPU/memory requests set on any workload (DEBT-04). Required before adding Vault + Keycloak to avoid OOM on the minikube VM. |

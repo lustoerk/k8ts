@@ -16,5 +16,9 @@ Retention: 15 days (Prometheus default). Sufficient for homelab PoC work.
 Tradeoffs Accepted
 Alertmanager runs with no receivers configured. Firing alerts have nowhere to
 go. Acceptable — the goal is to validate the stack topology, not operate alerts.
+An alerting destination (Slack webhook or similar) is deferred until Vault is
+stable, so receiver credentials can be stored in Vault rather than plaintext values.
 hostPath storage is not durable across minikube delete. Metrics history is
 ephemeral. Acceptable for a lab that rebuilds periodically.
+No resource requests or limits are set. Risk of OOM increases as more workloads
+are added. Resource tuning is deferred to DEBT-04 before Phase 4.
