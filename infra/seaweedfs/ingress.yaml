@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: s3.local
+  - host: s3.homelab
     http:
       paths:
       - path: /
@@ -22,5 +22,5 @@ spec:
               number: 8333
   tls:
   - hosts:
-    - s3.local
+    - s3.homelab
     secretName: seaweedfs-s3-tls

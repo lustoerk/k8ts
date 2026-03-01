@@ -6,11 +6,11 @@ prometheus:
       cert-manager.io/cluster-issuer: homelab-ca
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     hosts:
-      - prom.local
+      - prom.homelab
     tls:
       - secretName: prometheus-tls
         hosts:
-          - prom.local
+          - prom.homelab
   prometheusSpec:
     retention: 15d
     nodeSelector:
@@ -34,11 +34,11 @@ grafana:
     annotations:
       cert-manager.io/cluster-issuer: homelab-ca
     hosts:
-      - graf.local
+      - graf.homelab
     tls:
       - secretName: grafana-tls
         hosts:
-          - graf.local
+          - graf.homelab
 
 alertmanager:
   ingress:
@@ -48,11 +48,11 @@ alertmanager:
       cert-manager.io/cluster-issuer: homelab-ca
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     hosts:
-      - alman.local
+      - alman.homelab
     tls:
       - secretName: alertmanager-tls
         hosts:
-          - alman.local
+          - alman.homelab
   alertmanagerSpec:
     nodeSelector:
       kubernetes.io/arch: arm64
