@@ -1,23 +1,39 @@
-replicaCount: 1
-
-# Pin to major version tag — chart's patch-level tags lag Docker Hub publishing
 image:
-  tag: "26"
+  repository: camunda/keycloak
+  tag: "25"
 
-# KC 26 style — tells Keycloak it's behind a TLS-terminating proxy (nginx ingress)
-proxyHeaders: xforwarded
-production: false
+http:
+  # Serve at root — our OIDC URLs have no /auth prefix
+  relativePath: "/"
 
-auth:
-  adminUser: admin
-  existingSecret: keycloak-admin
-  passwordSecretKey: admin-password
+# Pass --import-realm so Keycloak imports /opt/keycloak/data/import/ on startup
+args:
+  - "start"
+  - "--import-realm"
+
+extraEnv: |
+  - name: KEYCLOAK_ADMIN
+    value: admin
+  - name: KEYCLOAK_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-admin
+        key: admin-password
+
+database:
+  vendor: postgres
+  hostname: keycloak-postgresql
+  port: 5432
+  database: keycloak
+  username: keycloak
+  existingSecret: keycloak-postgres
+  existingSecretKey: password
 
 nodeSelector:
   kubernetes.io/arch: arm64
 
-tls:
-  enabled: false
+# Single-node minikube — disable pod anti-affinity
+affinity: ""
 
 ingress:
   enabled: true
@@ -26,40 +42,53 @@ ingress:
     cert-manager.io/cluster-issuer: homelab-ca
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-  hostname: keycloak.homelab
-  tls: false
-  selfSigned: false
-  extraTls:
+  rules:
+    - host: keycloak.homelab
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
     - secretName: keycloak-tls
       hosts:
         - keycloak.homelab
 
-postgresql:
-  enabled: true
-  # Pin to major version tag — chart's patch-level tags lag Docker Hub publishing
-  image:
-    tag: "17"
-  auth:
-    database: keycloak
-    username: keycloak
-    existingSecret: keycloak-postgres
-    secretKeys:
-      adminPasswordKey: postgres-password
-      userPasswordKey: password
-  primary:
-    nodeSelector:
-      kubernetes.io/arch: arm64
-    persistence:
-      enabled: true
-      storageClass: standard
-      size: 2Gi
+# Init container substitutes Vault-backed client secrets into realm JSON template
+# before Keycloak starts, keeping secrets out of git and ConfigMaps
+extraInitContainers: |
+  - name: realm-import-prep
+    image: alpine:3
+    command:
+      - sh
+      - -c
+      - |
+        sed \
+          -e "s/\$(GRAFANA_CLIENT_SECRET)/${GRAFANA_CLIENT_SECRET}/g" \
+          -e "s/\$(ARGOCD_CLIENT_SECRET)/${ARGOCD_CLIENT_SECRET}/g" \
+          /realm-template/homelab.json > /realm-import/homelab.json
+    env:
+      - name: GRAFANA_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: keycloak-client-secrets
+            key: GRAFANA_CLIENT_SECRET
+      - name: ARGOCD_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: keycloak-client-secrets
+            key: ARGOCD_CLIENT_SECRET
+    volumeMounts:
+      - name: realm-template
+        mountPath: /realm-template
+      - name: realm-import
+        mountPath: /realm-import
 
-keycloakConfigCli:
-  enabled: true
-  # ConfigMap deployed alongside this app in infra/keycloak/manifests/
-  existingConfigmap: keycloak-realm-config
-  # ESO-managed secret with GRAFANA_CLIENT_SECRET and ARGOCD_CLIENT_SECRET from Vault
-  extraEnvVarsSecret: keycloak-client-secrets
-  cleanupAfterFinished:
-    enabled: true
-    seconds: 600
+extraVolumes: |
+  - name: realm-template
+    configMap:
+      name: keycloak-realm-config
+  - name: realm-import
+    emptyDir: {}
+
+extraVolumeMounts: |
+  - name: realm-import
+    mountPath: /opt/keycloak/data/import
