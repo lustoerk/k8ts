@@ -39,17 +39,19 @@ Deployed Vault (standalone, manual unseal) and External Secrets Operator. Bootst
 ### Phase 4 — Keycloak SSO
 Deployed Keycloak with realm import via init container (envsubst). Wired Grafana OAuth and ArgoCD OIDC. Resolved 8 bugs including in-cluster DNS, PKCE, issuer URL, and CoreDNS patching. Conducted architecture review (ADR-11).
 
-### Phase 5 — Resource Limits & Requests
-Closed 2026-05-20 after a re-open. Brought every application container under explicit CPU/memory requests and limits — including ArgoCD itself (managed via `infra/argocd/values.yaml`) and the kube-prometheus-stack sidecars missed in the initial 2026-03-01 close. Validated via cluster-wide gap audit, zero OOMKills, and a CFS-throttling demonstration on `argocd-server`. See [`docs/history/phase-5.md`](docs/history/phase-5.md).
-
 ---
 
 ## Roadmap
 
-### Phase 6 — Redis Operator `<-- current`
-Integrate the OT-CONTAINER-KIT Redis Operator as the first application-layer workload on the hardened platform. Tasks TBD — see [`docs/phase-log.md`](docs/phase-log.md).
+### Phase 5 — Resource Limits & Requests `<-- current`
+Implement DEBT-04: production-grade resource management across all workloads. Re-opened 2026-05-20 after a gap audit found 11 containers (all of ArgoCD + 4 kube-prometheus-stack sidecars) still missing `resources` despite the initial 2026-03-01 closure. See [`docs/phase-log.md`](docs/phase-log.md) for the active task list and BUG-10/11.
 
-### Phase 7 — SeaweedFS Review & Integration
+- [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
+- [x] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [x] Update Grafana dashboards to visualize resource usage vs. limits
+- [ ] Validate cluster stability under constrained resources
+
+### Phase 6 — SeaweedFS Review & Integration
 Bring SeaweedFS from "deployed but unused" to a fully integrated, tested storage service.
 
 - [ ] Enable S3 authentication (access key / secret key)
@@ -61,7 +63,7 @@ Bring SeaweedFS from "deployed but unused" to a fully integrated, tested storage
 - [ ] Deploy a small test workload that reads/writes to the S3 endpoint
 - [ ] Document S3 usage patterns for future workloads (AI model storage, backups)
 
-### Phase 8 — Operational Hardening
+### Phase 7 — Operational Hardening
 Close remaining tech debt and improve day-to-day operations.
 
 - [ ] Declarative CoreDNS — replace manual `hosts` patching with GitOps-managed ConfigMap
@@ -70,7 +72,7 @@ Close remaining tech debt and improve day-to-day operations.
 - [ ] Persistent storage — mount macOS host folders into minikube for data survival across `minikube delete`
 - [ ] /etc/hosts automation (script or LaunchAgent)
 
-### Phase 9 — New Applications (TBD)
+### Phase 8 — New Applications (TBD)
 Only after the platform is hardened. Candidates:
 
 - [ ] Forgejo or GitLab (self-hosted SCM + CI, Keycloak SSO)

@@ -1,0 +1,19 @@
+nodeSelector:
+  kubernetes.io/arch: arm64
+
+# pulling the image manually into minikube, since minikube can't reach quay.io
+# docker pull quay.io/opstree/redis-operator:v0.24.0 && minikube image load quay.io/opstree/redis-operator:v0.24.0
+redisOperator:
+  imagePullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# docs recommend enabling this
+featureGates:
+  GenerateConfigInInitContainer: true

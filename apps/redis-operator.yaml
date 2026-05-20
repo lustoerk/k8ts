@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/lustoerk/k8ts.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://ot-container-kit.github.io/helm-charts
+      chart: redis-operator
+      targetRevision: "0.24.0"
+      helm:
+        valueFiles:
+          - $values/infra/redis-operator/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redis-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
