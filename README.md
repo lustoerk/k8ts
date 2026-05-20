@@ -101,7 +101,16 @@ kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.cl
 
 ### 3. Secrets
 Managed via **HashiCorp Vault** and synchronized into Kubernetes Secrets using **External Secrets Operator (ESO)**.
-- **Note:** Vault starts sealed on every cluster restart. Must be unsealed manually with 2 of 3 keys.
+- **Note:** Vault starts sealed on every cluster restart. To unseal:
+  ```sh
+  # Retrieve the two unseal keys from .secrets (git‑ignored)
+  UNSEAL_KEY_1=$(grep 'Unseal Key 1' .secrets | awk '{print $4}')
+  UNSEAL_KEY_2=$(grep 'Unseal Key 2' .secrets | awk '{print $4}')
+  # Execute inside the Vault pod
+  kubectl exec -it vault-0 -n vault -- vault operator unseal $UNSEAL_KEY_1
+  kubectl exec -it vault-0 -n vault -- vault operator unseal $UNSEAL_KEY_2
+  ```
+  After the second key Vault will report `Sealed: false`. Store the keys securely (password manager) – they are required after any `minikube stop/start` or `minikube delete`.
 
 ---
 

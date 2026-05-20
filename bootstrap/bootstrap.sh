@@ -5,7 +5,13 @@ REPO_URL="https://github.com/lustoerk/k8ts.git"
 ARGOCD_NAMESPACE="argocd"
 
 echo "==> Starting minikube"
-minikube start --driver=qemu2 --memory=16384 --cpus=4 --disk-size=50g
+proxy_args=()
+[[ -n "${HTTP_PROXY:-}"  ]] && proxy_args+=(--docker-env "HTTP_PROXY=${HTTP_PROXY}")
+[[ -n "${HTTPS_PROXY:-}" ]] && proxy_args+=(--docker-env "HTTPS_PROXY=${HTTPS_PROXY}")
+[[ -n "${NO_PROXY:-}"    ]] && proxy_args+=(--docker-env "NO_PROXY=${NO_PROXY}")
+
+minikube start --driver=qemu2 --memory=16384 --cpus=4 --disk-size=50g \
+    ${proxy_args[@]+"${proxy_args[@]}"}
 
 echo "==> Enabling metrics-server addon"
 minikube addons enable metrics-server
@@ -15,7 +21,7 @@ helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
 echo "==> Installing ArgoCD"
-helm install argocd argo/argo-cd \
+helm upgrade --install argocd argo/argo-cd \
   -n "${ARGOCD_NAMESPACE}" --create-namespace \
   --set server.service.type=NodePort \
   --set configs.params."server\.insecure"=true
