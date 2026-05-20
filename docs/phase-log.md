@@ -21,12 +21,22 @@ Implement DEBT-04: production-grade resource management across all workloads.
 
 ### Tasks
 
-- [ ] Audit current resource usage across all pods (metrics-server / `kubectl top`)
-- [ ] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
+- [/] Define and apply CPU/memory requests and limits for all Helm-managed services
 - [ ] Validate cluster stability under constrained resources
-- [ ] Update Grafana dashboards to visualize resource usage vs. limits
+- [x] Update Grafana dashboards to visualize resource usage vs. limits
 
 ### Bugs / Unplanned Work
+
+**GAP-01** ArgoCD itself had no `resources` set on any of its 7 components
+- **Symptom:** Live `kubectl get pods -A -o json | jq` audit found `application-controller`, `applicationset-controller`, `dex-server`, `notifications-controller`, `redis`, `repo-server`, `server` all running with `resources: {}`.
+- **Root cause:** `bootstrap.sh` installed ArgoCD via inline `--set` flags only, with no values file. The previous Phase 5 pass touched the 7 ArgoCD-managed services but missed ArgoCD itself, which is bootstrap-installed.
+- **Fix:** Added `infra/argocd/values.yaml` (managed source of truth); switched `bootstrap.sh` to `helm upgrade --install ... -f infra/argocd/values.yaml`. Same NodePort + `server.insecure` settings preserved.
+
+**GAP-02** kube-prometheus-stack config-reloader and Grafana sidecars had no resources
+- **Symptom:** 4 containers — `config-reloader` on Prometheus and Alertmanager, plus `grafana-sc-dashboard` and `grafana-sc-datasources` — running with empty `resources`.
+- **Root cause:** Previous pass set resources only on the primary containers, not the sidecars. The config-reloader knob is at `prometheusOperator.prometheusConfigReloader.resources` (operator-level, applied to all CRs via CLI flags), not under each `*Spec`.
+- **Fix:** Added `prometheusOperator.prometheusConfigReloader.resources` and `grafana.sidecar.resources` to `infra/monitoring/values.yaml`.
 
 ### Tech Debt
 

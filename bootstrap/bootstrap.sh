@@ -23,8 +23,7 @@ helm repo update
 echo "==> Installing ArgoCD"
 helm upgrade --install argocd argo/argo-cd \
   -n "${ARGOCD_NAMESPACE}" --create-namespace \
-  --set server.service.type=NodePort \
-  --set configs.params."server\.insecure"=true
+  -f "$(dirname "$0")/../infra/argocd/values.yaml"
 
 echo "==> Waiting for argocd-server"
 kubectl wait --for=condition=available deployment/argocd-server \

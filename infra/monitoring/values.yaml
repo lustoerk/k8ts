@@ -39,6 +39,14 @@ grafana:
     limits:
       cpu: 200m
       memory: 600Mi
+  sidecar:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 128Mi
   admin:
     existingSecret: grafana-admin
     passwordKey: admin-password
@@ -139,3 +147,11 @@ prometheusOperator:
     limits:
       cpu: 100m
       memory: 128Mi
+  prometheusConfigReloader:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 128Mi
