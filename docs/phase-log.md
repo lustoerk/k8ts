@@ -38,6 +38,16 @@ Implement DEBT-04: production-grade resource management across all workloads.
 - **Root cause:** Previous pass set resources only on the primary containers, not the sidecars. The config-reloader knob is at `prometheusOperator.prometheusConfigReloader.resources` (operator-level, applied to all CRs via CLI flags), not under each `*Spec`.
 - **Fix:** Added `prometheusOperator.prometheusConfigReloader.resources` and `grafana.sidecar.resources` to `infra/monitoring/values.yaml`.
 
+**BUG-10** `helm upgrade argocd` rejected on `argocd-cm` / `argocd-rbac-cm` field-manager conflict
+- **Symptom:** `UPGRADE FAILED: conflict occurred while applying object argocd/argocd-cm: conflicts with "argocd-controller" using v1: .data.timeout.reconciliation, .data.url` (and similar for `argocd-rbac-cm`).
+- **Root cause:** Both the chart and the `argocd-ingress` Application apply these ConfigMaps. Server-side apply detects two managers with conflicting field values.
+- **Fix:** Set `configs.cm.create: false` and `configs.rbac.create: false` in `infra/argocd/values.yaml` so the chart skips them. Sole manager is now the `argocd-ingress` Application. Also added `directory.include: "{argocd-cm.yaml,argocd-rbac-cm.yaml,ingress.yaml}"` to `apps/argocd-ingress.yaml` so ArgoCD does not attempt to apply the new `values.yaml` as a K8s manifest.
+
+**BUG-11** Helm upgrade with `cm.create: false` deleted the live ConfigMap; reapplied manifest invisible to controllers
+- **Symptom:** After helm upgrade, ArgoCD `server` and `application-controller` CrashLoopBackOff with `fatal: configmap "argocd-cm" not found`. Reapplying `infra/argocd/argocd-cm.yaml` via `kubectl apply` did not unstick them.
+- **Root cause:** Helm interpreted the change from `cm.create: true` → `false` as a removal and deleted the existing argocd-cm. The reapplied raw manifest had no labels; ArgoCD's configmap informer filters by `app.kubernetes.io/part-of=argocd`.
+- **Fix:** Added `app.kubernetes.io/name` + `app.kubernetes.io/part-of: argocd` labels to `infra/argocd/argocd-cm.yaml` and `argocd-rbac-cm.yaml`. After reapply, controllers picked them up immediately on next pod restart.
+
 ### Tech Debt
 
 ---

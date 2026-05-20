@@ -5,6 +5,13 @@ global:
 configs:
   params:
     server.insecure: true
+  # argocd-cm and argocd-rbac-cm are managed by the argocd-ingress Application
+  # (raw manifests in infra/argocd/). Chart must not render them or server-side
+  # apply rejects on field-manager conflict with argocd-controller.
+  cm:
+    create: false
+  rbac:
+    create: false
 
 server:
   service:

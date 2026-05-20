@@ -11,6 +11,8 @@ spec:
     repoURL: https://github.com/lustoerk/k8ts.git
     targetRevision: main
     path: infra/argocd
+    directory:
+      include: "{argocd-cm.yaml,argocd-rbac-cm.yaml,ingress.yaml}"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

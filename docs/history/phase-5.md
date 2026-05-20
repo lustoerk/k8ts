@@ -1,35 +1,36 @@
 # Phase 5 — Resource Limits & Requests
 
-**Date:** 2026-03-01
+**Initial close:** 2026-03-01 (premature, see below)
+**Reopened:** 2026-05-20
+**Final close:** TBD (validation pending)
 
 ## Tasks
 
 - [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
 - [x] Define and apply CPU/memory requests and limits for all Helm-managed services
-- [x] Validate cluster stability under constrained resources
 - [x] Update Grafana dashboards to visualize resource usage vs. limits
+- [ ] Validate cluster stability under constrained resources (in progress)
 
 ## Summary
 
-Closed DEBT-04. Applied CPU/memory requests and limits to all 7 Helm-managed services (monitoring, keycloak, vault, ingress-nginx, cert-manager, external-secrets, seaweedfs) and the plain-manifest PostgreSQL StatefulSet. Sizing based on live `kubectl top` data — requests at ~80% of observed, limits at 2–3x requests. Added custom Grafana dashboard (`homelab-resources-dashboard` ConfigMap) scoped to all homelab namespaces with bar gauges (% of limit), detail tables, and time-series trends for memory and CPU.
+Phase 5 was initially closed on 2026-03-01 with all four boxes checked, but a re-audit on 2026-05-20 found **11 containers still missing `resources`**:
+
+- The 7 ArgoCD components, because ArgoCD is bootstrap-installed via `bootstrap.sh` with `--set` flags only — the previous pass touched ArgoCD-managed services but missed ArgoCD itself.
+- 4 kube-prometheus-stack sidecars (Prometheus + Alertmanager `config-reloader`, Grafana `sc-dashboard` + `sc-datasources`), because the previous pass set resources only on the primary containers and used the wrong chart key.
+
+### Recovery work (2026-05-20)
+
+- Added `infra/argocd/values.yaml` as the managed source for the argo-cd chart, switched `bootstrap.sh` to use it via `-f`, sized all 7 components from observed usage.
+- Added `prometheusOperator.prometheusConfigReloader.resources` (operator-wide CLI flag, covers both Prometheus + Alertmanager config-reloaders) and `grafana.sidecar.resources` to `infra/monitoring/values.yaml`.
+- Resolved a downstream helm-upgrade conflict on `argocd-cm` / `argocd-rbac-cm` (see BUG-10/11 in `docs/phase-log.md`) by disabling chart-side creation of those ConfigMaps and adopting them as raw-manifest-only via the `argocd-ingress` Application.
+
+### Initial-close work (2026-03-01)
+
+Applied CPU/memory requests and limits to the 7 Helm-managed services touched by the original Phase 5 pass (monitoring, keycloak, vault, ingress-nginx, cert-manager, external-secrets, seaweedfs) and the plain-manifest PostgreSQL StatefulSet. Sizing convention: requests at ~80% of observed, limits at 2–3× requests. Added the custom Grafana dashboard `homelab-resources-dashboard` ConfigMap with bar gauges (% of limit), detail tables, and time-series for memory and CPU.
 
 ## Bugs / Unplanned Work
 
-**BUG-01** SeaweedFS chart expects `resources` as a multiline string, not a map
-- **Symptom:** ArgoCD ComparisonError on seaweedfs app — `wrong type for value; expected string; got map`.
-- **Fix:** Changed `resources:` block to use `|` multiline string format, matching the chart's `nodeSelector` pattern.
-
-**BUG-02** `vault-agent-injector` rolling update deadlocked on single-node cluster
-- **Symptom:** New injector pod stuck `Pending` — default `requiredDuringSchedulingIgnoredDuringExecution` anti-affinity blocked it while old pod was still running.
-- **Fix:** Added `affinity: ""` to `injector:` in vault values. Manually deleted old pod and stale ReplicaSets to unblock the rollout.
-
-**BUG-03** `vault-0` resource limits not applied via ArgoCD sync — `OnDelete` update strategy
-- **Symptom:** StatefulSet spec updated by ArgoCD but vault-0 pod kept running with `resources: {}`. Also, dataStorage PVC size mismatch (values: 5Gi, live PVC: 10Gi) blocked ArgoCD convergence.
-- **Fix:** Patched StatefulSet directly (`kubectl patch`) to apply resources and clear anti-affinity. Manually deleted vault-0 to trigger recreation. Corrected `dataStorage.size` to 10Gi in values to match the immutable live PVC.
-
-**BUG-04** `monitoring` Application third source not picked up until root app re-synced
-- **Symptom:** Adding `infra/monitoring/manifests` path source to `apps/monitoring.yaml` had no effect — ArgoCD cluster Application object still had only 2 sources.
-- **Fix:** Root App-of-Apps must be explicitly synced to propagate changes to child Application specs. Synced root app, then re-synced monitoring.
+Initial-close bugs (BUG-01 through BUG-04) and re-open work (GAP-01/02, BUG-10/11) are recorded in `docs/phase-log.md` under the active phase block. They will be archived here when the phase is finally closed.
 
 ## Tech Debt
 

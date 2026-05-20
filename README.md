@@ -44,12 +44,12 @@ Deployed Keycloak with realm import via init container (envsubst). Wired Grafana
 ## Roadmap
 
 ### Phase 5 — Resource Limits & Requests `<-- current`
-Implement DEBT-04: production-grade resource management across all workloads.
+Implement DEBT-04: production-grade resource management across all workloads. Re-opened 2026-05-20 after a gap audit found 11 containers (all of ArgoCD + 4 kube-prometheus-stack sidecars) still missing `resources` despite the initial 2026-03-01 closure. See [`docs/phase-log.md`](docs/phase-log.md) for the active task list and BUG-10/11.
 
-- [ ] Audit current resource usage across all pods (metrics-server / `kubectl top`)
-- [ ] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
+- [x] Define and apply CPU/memory requests and limits for all Helm-managed services
+- [x] Update Grafana dashboards to visualize resource usage vs. limits
 - [ ] Validate cluster stability under constrained resources
-- [ ] Update Grafana dashboards to visualize resource usage vs. limits
 
 ### Phase 6 — SeaweedFS Review & Integration
 Bring SeaweedFS from "deployed but unused" to a fully integrated, tested storage service.
