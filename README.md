@@ -19,6 +19,7 @@ This project aims to replicate a production-like environment (Vault, Keycloak, S
 | **cert-manager** | — | TLS (self-signed CA) | Ready |
 | **ingress-nginx** | — | Ingress Controller | Ready |
 | **ESO** | — | Vault-to-K8s Secret Sync | Ready |
+| **Redis Operator** | (cluster-internal) | In-Cluster Redis | Ready |
 
 ---
 
@@ -39,6 +40,12 @@ Deployed Vault (standalone, manual unseal) and External Secrets Operator. Bootst
 ### Phase 4 — Keycloak SSO
 Deployed Keycloak with realm import via init container (envsubst). Wired Grafana OAuth and ArgoCD OIDC. Resolved 8 bugs including in-cluster DNS, PKCE, issuer URL, and CoreDNS patching. Conducted architecture review (ADR-11).
 
+### Phase 5 — Resource Limits & Requests
+Enforced resource limits and requests across all workloads. Validated with CFS throttling tests and cluster-wide restart audit.
+
+### Phase 6 — Redis Operator
+Deployed OT-CONTAINER-KIT Redis Operator (v0.24.0). Registered 4 CRDs (Redis, RedisCluster, RedisReplication, RedisSentinel). Validated with smoke test.
+
 ---
 
 ## Roadmap
@@ -50,7 +57,6 @@ Forward roadmap: [`docs/phase-log.md`](docs/phase-log.md)
 
 ### Upcoming Phases (summary)
 
-- **Phase 6** — Redis Operator  
 - **Phase 7** — SeaweedFS Review & Integration  
 - **Phase 8** — Operational Hardening  
 - **Phase 9** — New Applications
