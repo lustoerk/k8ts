@@ -2,14 +2,14 @@
 
 **Initial close:** 2026-03-01 (premature, see below)
 **Reopened:** 2026-05-20
-**Final close:** TBD (validation pending)
+**Final close:** 2026-05-20
 
 ## Tasks
 
 - [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
 - [x] Define and apply CPU/memory requests and limits for all Helm-managed services
 - [x] Update Grafana dashboards to visualize resource usage vs. limits
-- [ ] Validate cluster stability under constrained resources (in progress)
+- [x] Validate cluster stability under constrained resources
 
 ## Summary
 
@@ -18,7 +18,7 @@ Phase 5 was initially closed on 2026-03-01 with all four boxes checked, but a re
 - The 7 ArgoCD components, because ArgoCD is bootstrap-installed via `bootstrap.sh` with `--set` flags only — the previous pass touched ArgoCD-managed services but missed ArgoCD itself.
 - 4 kube-prometheus-stack sidecars (Prometheus + Alertmanager `config-reloader`, Grafana `sc-dashboard` + `sc-datasources`), because the previous pass set resources only on the primary containers and used the wrong chart key.
 
-### Recovery work (2026-05-20)
+### Recovery work (2026-05-20, final close: 2026-05-20)
 
 - Added `infra/argocd/values.yaml` as the managed source for the argo-cd chart, switched `bootstrap.sh` to use it via `-f`, sized all 7 components from observed usage.
 - Added `prometheusOperator.prometheusConfigReloader.resources` (operator-wide CLI flag, covers both Prometheus + Alertmanager config-reloaders) and `grafana.sidecar.resources` to `infra/monitoring/values.yaml`.

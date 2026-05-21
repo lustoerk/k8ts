@@ -43,41 +43,17 @@ Deployed Keycloak with realm import via init container (envsubst). Wired Grafana
 
 ## Roadmap
 
-### Phase 5 — Resource Limits & Requests `<-- current`
-Implement DEBT-04: production-grade resource management across all workloads. Re-opened 2026-05-20 after a gap audit found 11 containers (all of ArgoCD + 4 kube-prometheus-stack sidecars) still missing `resources` despite the initial 2026-03-01 closure. See [`docs/phase-log.md`](docs/phase-log.md) for the active task list and BUG-10/11.
+**Current phase:** See [`.scratch/LOG.md`](.scratch/LOG.md) for active session state.
 
-- [x] Audit current resource usage across all pods (metrics-server / `kubectl top`)
-- [x] Define and apply CPU/memory requests and limits for all Helm-managed services
-- [x] Update Grafana dashboards to visualize resource usage vs. limits
-- [ ] Validate cluster stability under constrained resources
+Completed phases: [`docs/history/`](docs/history/)  
+Forward roadmap: [`docs/phase-log.md`](docs/phase-log.md)
 
-### Phase 6 — SeaweedFS Review & Integration
-Bring SeaweedFS from "deployed but unused" to a fully integrated, tested storage service.
+### Upcoming Phases (summary)
 
-- [ ] Enable S3 authentication (access key / secret key)
-- [ ] Store S3 credentials in Vault, sync via ESO
-- [ ] Enable SeaweedFS Prometheus metrics + add ServiceMonitor
-- [ ] Build Grafana dashboard for SeaweedFS (capacity, request rate, latency)
-- [ ] Expose SeaweedFS admin UI via ingress (`seaweedfs.homelab`)
-- [ ] Evaluate Keycloak integration for admin UI access (OAuth2 proxy or native)
-- [ ] Deploy a small test workload that reads/writes to the S3 endpoint
-- [ ] Document S3 usage patterns for future workloads (AI model storage, backups)
-
-### Phase 7 — Operational Hardening
-Close remaining tech debt and improve day-to-day operations.
-
-- [ ] Declarative CoreDNS — replace manual `hosts` patching with GitOps-managed ConfigMap
-- [ ] Vault auto-unseal or break-glass procedure
-- [ ] Document "Bootstrap from Zero" disaster recovery runbook
-- [ ] Persistent storage — mount macOS host folders into minikube for data survival across `minikube delete`
-- [ ] /etc/hosts automation (script or LaunchAgent)
-
-### Phase 8 — New Applications (TBD)
-Only after the platform is hardened. Candidates:
-
-- [ ] Forgejo or GitLab (self-hosted SCM + CI, Keycloak SSO)
-- [ ] AI/ML workload using SeaweedFS S3 for model/data storage
-- [ ] Additional Keycloak-integrated services as needed
+- **Phase 6** — Redis Operator  
+- **Phase 7** — SeaweedFS Review & Integration  
+- **Phase 8** — Operational Hardening  
+- **Phase 9** — New Applications
 
 ---
 

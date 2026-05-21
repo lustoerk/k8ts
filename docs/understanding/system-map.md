@@ -70,13 +70,13 @@ Two tiers, different purposes:
 | monitoring | 2 | Running (Application shows `OutOfSync/Healthy` permanently — known ArgoCD quirk with multi-source floating chart version; ignore) |
 | Vault + ESO | 3 | Running (manual unseal on every cluster restart) |
 | Keycloak (+ config) | 4 | Running (Grafana + ArgoCD SSO live) |
-| Resource limits & requests | 5 | **In progress** — re-opened |
+| Resource limits & requests | 5 | Completed 2026-05-20 |
 
 ## Deferred
 
 | Tool | Phase | Role |
 |------|-------|------|
-| Redis Operator | 6 | First application-layer workload |
+| Redis Operator | 6 | Planned |
 | SeaweedFS full integration (auth, metrics, dashboard, ingress hardening) | 7 | Make SeaweedFS production-grade |
 | Declarative CoreDNS | 8 | Replace manual `hosts` patching with GitOps-managed ConfigMap |
 | Vault auto-unseal / break-glass | 8 | Eliminate the manual-unseal step on cluster restart |

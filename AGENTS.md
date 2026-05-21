@@ -23,6 +23,24 @@ docs/       ADRs, phase-log (roadmap), history, architecture notes
 - **Decisions** → `docs/adrs/` (one ADR per non-trivial choice).
 - **Roadmap** → `docs/phase-log.md` (forward-looking only; completed phases live in `docs/history/`).
 
+## Documentation Hierarchy (Single Source of Truth)
+
+To prevent documentation drift, responsibilities are strictly separated:
+
+| Document | Responsibility | NEVER Contains |
+|----------|---------------|----------------|
+| `.scratch/LOG.md` | **Only** current phase state | Future roadmap, historical records |
+| `docs/phase-log.md` | Forward roadmap (phases not started) | "Current" markers, completed work |
+| `docs/history/phase-*.md` | Completed phase records | Active work, future plans |
+| `README.md` | Human onboarding + stack overview | Detailed phase task lists |
+| `AGENTS.md` | Agent conventions + pitfalls | Status, roadmap |
+
+**On phase completion:**
+1. `/done` updates `.scratch/LOG.md`
+2. Manually move phase from `phase-log.md` → `history/phase-*.md`
+3. Update `system-map.md` deployment table
+4. README.md NEVER contains detailed phase lists—only links
+
 ## Architecture Decisions
 
 - App-of-Apps pattern; wave-based sync ordering

@@ -34,5 +34,12 @@ The "Definition of Success" for the homelab includes being prepared for an event
 2. **Data Persistence:** Current state is volatile (minikube-internal). Plan is to mount macOS folders.
 3. **Secrets:** Root-of-Trust (Vault) requires unseal keys stored securely in a local password manager.
 
+## Phase 5 Completion
+
+Phase 5 (Resource Limits & Requests / DEBT-04) completed 2026-05-20. See [Phase 5 history](../history/phase-5-resources.md) for full details including GAP-01/02 and BUG-10/11.
+
 ## Next Steps
-Phase 5 will focus exclusively on **Hardening & Professionalization** (DEBT-04 and Declarative DNS) before adding any new applications.
+
+**Phase 6** — Redis Operator: Integrate the OT-CONTAINER-KIT Redis Operator as the first application-layer workload on the hardened platform.
+
+Remaining professionalization items (Declarative DNS, Disaster Recovery, Vault Unseal) deferred to Phase 8.
